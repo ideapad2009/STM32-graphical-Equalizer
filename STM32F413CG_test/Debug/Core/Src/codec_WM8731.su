@@ -1,0 +1,2 @@
+codec_WM8731.c:59:6:Codec_Reset	24	static
+codec_WM8731.c:86:10:Codec_WriteRegister	32	static

@@ -1,0 +1,9 @@
+body_DFSDM_I2S.h:52:6:playSong	8	static
+body_DFSDM_I2S.h:67:5:Calc_IIR_Left	24	static
+body_DFSDM_I2S.h:83:5:Calc_IIR_Right	24	static
+body_DFSDM_I2S.h:98:5:main	8	static
+body_DFSDM_I2S.h:175:6:HAL_DFSDM_FilterRegConvHalfCpltCallback	16	static
+body_DFSDM_I2S.h:180:6:HAL_DFSDM_FilterRegConvCpltCallback	16	static
+body_DFSDM_I2S.h:188:6:TestBlinking	8	static
+main.c:73:6:SystemClock_Config	176	static
+main.c:136:6:Error_Handler	8	static
