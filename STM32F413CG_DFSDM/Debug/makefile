@@ -24,24 +24,24 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-STM32F413CG_test.elf \
+STM32F413CG_DFSDM.elf \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-STM32F413CG_test.list \
+STM32F413CG_DFSDM.list \
 
 OBJCOPY_BIN += \
-STM32F413CG_test.bin \
+STM32F413CG_DFSDM.bin \
 
 
 # All Target
-all: STM32F413CG_test.elf secondary-outputs
+all: STM32F413CG_DFSDM.elf secondary-outputs
 
 # Tool invocations
-STM32F413CG_test.elf: $(OBJS) $(USER_OBJS) C:\Users\Hanna\ Nabil\STM32CubeIDE\workspace_1.2.0\STM32F413CG_test\STM32F413CGUX_FLASH.ld
-	arm-none-eabi-gcc -o "STM32F413CG_test.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Hanna Nabil\STM32CubeIDE\workspace_1.2.0\STM32F413CG_test\STM32F413CGUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F413CG_test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32F413CG_DFSDM.elf: $(OBJS) $(USER_OBJS) F:\Embedded\ Systems\STM32CubeIDE\STM32-graphical-Equalizer\STM32F413CG_DFSDM\STM32F413CGUX_FLASH.ld
+	arm-none-eabi-gcc -o "STM32F413CG_DFSDM.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\Embedded Systems\STM32CubeIDE\STM32-graphical-Equalizer\STM32F413CG_DFSDM\STM32F413CGUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F413CG_DFSDM.map" -Wl,--gc-sections -static -L"../Middlewares\GREQ\Lib" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -50,13 +50,13 @@ default.size.stdout: $(EXECUTABLES)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-STM32F413CG_test.list: $(EXECUTABLES)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "STM32F413CG_test.list"
+STM32F413CG_DFSDM.list: $(EXECUTABLES)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "STM32F413CG_DFSDM.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-STM32F413CG_test.bin: $(EXECUTABLES)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "STM32F413CG_test.bin"
+STM32F413CG_DFSDM.bin: $(EXECUTABLES)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "STM32F413CG_DFSDM.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 

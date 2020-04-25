@@ -20,10 +20,12 @@
 #include "song_24_43k.h"
 #include <song_u8_43k.h>
 #include "iirFilter.h"
+#include "Equalizer.h"
 #define W8731_ADDR_0 			     0x1A // this is the address of the CODEC when CSB is low
 #define CODEC_ADDRESS               (W8731_ADDR_0<<1)
 #define SaturaLH(N, L, H)           (((N)<(L))?(L):(((N)>(H))?(H):(N)))
-#define AUDIO_REC      	            1000
+#define GREQ_ERROR_NONE                            0
+#define AUDIO_REC      	                   1000
 
 
 uint32_t i,j;
@@ -46,6 +48,7 @@ uint8_t DmaLeftRecBuffCplt      = 0;
 uint8_t DmaRightRecHalfBuffCplt = 0;
 uint8_t DmaRightRecBuffCplt     = 0;
 uint8_t PlaybackStarted         = 0;
+int8_t error = GREQ_ERROR_NONE;
 
 void TestBlinking(void);
 void delay(uint32_t ms);
@@ -64,36 +67,35 @@ void playSong(void){
 	else {x=0;playSong();
 	}
 	}
-int Calc_IIR_Left (int inSample) {
-	float inSampleF = (float)inSample;
-	float outSampleF =
-			l_a0 * inSampleF
-			+ l_a1 * lin_z1
-			+ l_a2 * lin_z2
-			- l_b1 * lout_z1
-			- l_b2 * lout_z2;
-	lin_z2 = lin_z1;
-	lin_z1 = inSampleF;
-	lout_z2 = lout_z1;
-	lout_z1 = outSampleF;
 
-	return (int) outSampleF;
+void audioProcessHalf(void){
+	/*error=equalizerProcess(&RightRecBuff[0]);
+	if (error != GREQ_ERROR_NONE)
+	{
+		Error_Handler();
+	}*/
+	for(i = 0; i < AUDIO_REC/2; i++)
+	{
+		RightRecBuff[i]=RightRecBuff[i]*2;
+		txBuf[i*4] = RightRecBuff[i]>>16 ;
+		txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]<<1);//&0xFF00 //to emit the least 8 bit
+		txBuf[(i*4)+2] = txBuf[i*4];
+		txBuf[(i*4)+3] = txBuf[(i*4)+1];
+	}
+	HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
 }
-
-int Calc_IIR_Right (int inSample) {
-	float inSampleF = (float)inSample;
-	float outSampleF =
-			r_a0 * inSampleF
-			+ r_a1 * rin_z1
-			+ r_a2 * rin_z2
-			- r_b1 * rout_z1
-			- r_b2 * rout_z2;
-	rin_z2 = rin_z1;
-	rin_z1 = inSampleF;
-	rout_z2 = rout_z1;
-	rout_z1 = outSampleF;
-
-	return (int) outSampleF;
+void audioProcessFull(void){
+	for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
+	{
+		RightRecBuff[i]=RightRecBuff[i]*2;
+		txBuf[i*4] = RightRecBuff[i]>>16 ;
+		txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]) ;//&0xFF00 //to emit the least 8 bit
+		txBuf[(i*4)+2] = txBuf[i*4];
+		txBuf[(i*4)+3] = txBuf[(i*4)+1];
+	}
+	HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
+	DmaLeftRecBuffCplt  = 0;
+	DmaRightRecBuffCplt = 0;
 }
 int main(void)
 {
@@ -116,6 +118,12 @@ int main(void)
 		TestBlinking();
 	}
 	Codec_Reset(&hi2c1);
+
+	error =Equalizer_Init(AUDIO_REC/4);
+	if (error != GREQ_ERROR_NONE)
+	{
+		Error_Handler();
+	}
 	if(HAL_OK != HAL_DFSDM_FilterRegularStart_DMA(&hdfsdm1_filter0, RightRecBuff, AUDIO_REC))
 	{
 		Error_Handler();
@@ -128,42 +136,52 @@ int main(void)
 
 		if((DmaRightRecHalfBuffCplt == 1))
 		{
-
+			error=equalizerProcess(&RightRecBuff[0]);
+			if (error != GREQ_ERROR_NONE)
+			{
+				Error_Handler();
+			}
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				RightRecBuff[i]=RightRecBuff[i]*6;
+				RightRecBuff[i]=RightRecBuff[i]*3;
 				txBuf[i*4] = RightRecBuff[i]>>16 ;
 				txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]<<1);//&0xFF00 //to emit the least 8 bit
 				txBuf[(i*4)+2] = txBuf[i*4];
 				txBuf[(i*4)+3] = txBuf[(i*4)+1];
 			}
-			//HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
+			HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
 
-			if(PlaybackStarted == 0)
+			/*if(PlaybackStarted == 0)
 			{
 				if(HAL_OK != HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC*2))
 				{
 					Error_Handler();
 				}
 				PlaybackStarted = 1;
-			}
+			}*/
 			DmaLeftRecHalfBuffCplt  = 0;
 			DmaRightRecHalfBuffCplt = 0;
 		}
 		if( (DmaRightRecBuffCplt == 1))
 		{
+			error=equalizerProcess(&RightRecBuff[AUDIO_REC/2]);
+			if (error != GREQ_ERROR_NONE)
+			{
+				Error_Handler();
+			}
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
 			{
-				RightRecBuff[i]=RightRecBuff[i]*6;
+				RightRecBuff[i]=RightRecBuff[i]*3;
 				txBuf[i*4] = RightRecBuff[i]>>16 ;
 				txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]) ;//&0xFF00 //to emit the least 8 bit
 				txBuf[(i*4)+2] = txBuf[i*4];
 				txBuf[(i*4)+3] = txBuf[(i*4)+1];
 			}
-			 //HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
+			HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)&txBuf[AUDIO_REC], AUDIO_REC);
 			DmaLeftRecBuffCplt  = 0;
 			DmaRightRecBuffCplt = 0;
 		}
+
 	}
 }
 
@@ -175,6 +193,7 @@ int main(void)
 void HAL_DFSDM_FilterRegConvHalfCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
 		DmaRightRecHalfBuffCplt = 1;
+
 	//DmaLeftRecHalfBuffCplt=1;
 }
 void HAL_DFSDM_FilterRegConvCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)

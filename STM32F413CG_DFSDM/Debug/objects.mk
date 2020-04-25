@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS :=
+LIBS := -l:GrEq_32b_CM4_GCC.a
 

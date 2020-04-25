@@ -38,7 +38,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/gpio.h ../Core/Inc/body_DFSDM_I2S.h \
  ../Core/Inc/codec_WM8731.h ../Core/Inc/song_16.h \
  ../Core/Inc/song_24_48k.h ../Core/Inc/song_24_43k.h \
- ../Core/Inc/song_u8_43k.h ../Core/Inc/iirFilter.h
+ ../Core/Inc/song_u8_43k.h ../Core/Inc/iirFilter.h \
+ ../Core/Inc/Equalizer.h
 
 ../Core/Inc/main.h:
 
@@ -139,3 +140,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/song_u8_43k.h:
 
 ../Core/Inc/iirFilter.h:
+
+../Core/Inc/Equalizer.h:
