@@ -8,5 +8,5 @@
 #ifndef EQUALIZER_H_
 #define EQUALIZER_H_
 int8_t Equalizer_Init( uint16_t buffer_size);
-int8_t equalizerProcess(int32_t *In_Buffer);
+int8_t equalizerProcess(int32_t *In_Buffer,int32_t * OutBuffer);
 #endif /* EQUALIZER_H_ */

@@ -5,8 +5,8 @@
  *      Author: Hanna Nabil
  */
 
-#ifndef INC_BODY_DFSDM_I2S_H_
-#define INC_BODY_DFSDM_I2S_H_
+#ifndef INC_BODY_DFSDM_I2S_GREQ_H_
+#define INC_BODY_DFSDM_I2S_GREQ_H_
 
 /*hdfsdm1_filter0.Init.InjectedParam.Trigger        = DFSDM_FILTER_SW_TRIGGER;
   hdfsdm1_filter0.Init.InjectedParam.ScanMode       = ENABLE;
@@ -25,20 +25,16 @@
 #define CODEC_ADDRESS               (W8731_ADDR_0<<1)
 #define SaturaLH(N, L, H)           (((N)<(L))?(L):(((N)>(H))?(H):(N)))
 #define GREQ_ERROR_NONE                            0
-#define AUDIO_REC      	                   1000
+#define AUDIO_REC      	                   10
 
 
 uint32_t i,j;
 uint32_t x= 0 ;
-int DAC_FLAG =0;
-int32_t RightRecBuff[AUDIO_REC*4]={0};
-int32_t LeftRecBuff[AUDIO_REC]={0};
-int16_t RecBuff[AUDIO_REC*2]={0};
-
-uint16_t PlayBuff[AUDIO_REC*2]={0}; // playBuff =2* AUDIO_REC coming from DFSDM (as we are duplicating the input signal to stereo)
-uint16_t txBuf[AUDIO_REC*8]={0};
+int32_t RightRecBuff[AUDIO_REC]={0};
+//int32_t LeftRecBuff[AUDIO_REC]={0};
+int32_t PlayBuff[AUDIO_REC*4]={0}; // playBuff =2* AUDIO_REC coming from DFSDM (as we are duplicating the input signal to stereo)
+uint16_t txBuf[AUDIO_REC*4]={0};
 int32_t  Sample32 =0;
-int32_t  Sample32_ =0;
 uint32_t uSample32 =0;
 uint16_t uSample16 =0;
 int16_t  sample16=0;
@@ -51,11 +47,12 @@ uint8_t PlaybackStarted         = 0;
 int8_t error = GREQ_ERROR_NONE;
 
 void TestBlinking(void);
-void delay(uint32_t ms);
 void playSong(void){
 	if (x < (SONG_SIZE_24 -4 )){
 		for(i = 0,j=x; i < AUDIO_REC; i++,j++)
 		{
+			PlayBuff[i*2]=    song_24[i];
+			PlayBuff[(i*2)+1]=PlayBuff[i*2];
 			uSample32        = (uint32_t) song_24[j] ;
 			txBuf[i*4]     = (uSample32>>16) & 0xFFFF;
 			txBuf[(i*4)+1] = (uSample32 )& 0xFFFF;
@@ -67,36 +64,6 @@ void playSong(void){
 	else {x=0;playSong();
 	}
 	}
-
-void audioProcessHalf(void){
-	/*error=equalizerProcess(&RightRecBuff[0]);
-	if (error != GREQ_ERROR_NONE)
-	{
-		Error_Handler();
-	}*/
-	for(i = 0; i < AUDIO_REC/2; i++)
-	{
-		RightRecBuff[i]=RightRecBuff[i]*2;
-		txBuf[i*4] = RightRecBuff[i]>>16 ;
-		txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]<<1);//&0xFF00 //to emit the least 8 bit
-		txBuf[(i*4)+2] = txBuf[i*4];
-		txBuf[(i*4)+3] = txBuf[(i*4)+1];
-	}
-	HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
-}
-void audioProcessFull(void){
-	for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
-	{
-		RightRecBuff[i]=RightRecBuff[i]*2;
-		txBuf[i*4] = RightRecBuff[i]>>16 ;
-		txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]) ;//&0xFF00 //to emit the least 8 bit
-		txBuf[(i*4)+2] = txBuf[i*4];
-		txBuf[(i*4)+3] = txBuf[(i*4)+1];
-	}
-	HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
-	DmaLeftRecBuffCplt  = 0;
-	DmaRightRecBuffCplt = 0;
-}
 int main(void)
 {
 	HAL_Init();
@@ -119,7 +86,7 @@ int main(void)
 	}
 	Codec_Reset(&hi2c1);
 
-	error =Equalizer_Init(AUDIO_REC/4);
+	error =Equalizer_Init(AUDIO_REC*2);
 	if (error != GREQ_ERROR_NONE)
 	{
 		Error_Handler();
@@ -128,6 +95,7 @@ int main(void)
 	{
 		Error_Handler();
 	}
+	//playSong();
 
 	//playSong();
 	//HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC*2);
@@ -136,20 +104,20 @@ int main(void)
 
 		if((DmaRightRecHalfBuffCplt == 1))
 		{
-			error=equalizerProcess(&RightRecBuff[0]);
-			if (error != GREQ_ERROR_NONE)
-			{
-				Error_Handler();
-			}
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				RightRecBuff[i]=RightRecBuff[i]*3;
-				txBuf[i*4] = RightRecBuff[i]>>16 ;
-				txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]<<1);//&0xFF00 //to emit the least 8 bit
-				txBuf[(i*4)+2] = txBuf[i*4];
-				txBuf[(i*4)+3] = txBuf[(i*4)+1];
+				uSample32=RightRecBuff[i]*3;
+				PlayBuff[i*2]=RightRecBuff[i]*2;
+				PlayBuff[(i*2)+1]=PlayBuff[i*2];
+//				PlayBuff[i*2]=uSample32 <<16 | uSample32 >>16;
+//				PlayBuff[(i*2)+1]= PlayBuff[i*2];
+//				txBuf[i*4] = RightRecBuff[i]>>16 ;
+//				txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]<<1);//&0xFF00 //to emit the least 8 bit
+//				txBuf[(i*4)+2] = txBuf[i*4];
+//				txBuf[(i*4)+3] = txBuf[(i*4)+1];
 			}
-			HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
+
+			//HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)txBuf, AUDIO_REC);
 
 			/*if(PlaybackStarted == 0)
 			{
@@ -164,20 +132,29 @@ int main(void)
 		}
 		if( (DmaRightRecBuffCplt == 1))
 		{
-			error=equalizerProcess(&RightRecBuff[AUDIO_REC/2]);
+			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
+			{
+				//uSample32=RightRecBuff[i]*3;
+				PlayBuff[i*2]=RightRecBuff[i]*2;
+				PlayBuff[(i*2)+1]=PlayBuff[i*2];
+//				PlayBuff[i*2]=uSample32 <<16 | uSample32 >>16;
+//				PlayBuff[(i*2)+1]= PlayBuff[i*2];
+//				txBuf[i*4] = RightRecBuff[i]>>16 ;
+//				txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]) ;//&0xFF00 //to emit the least 8 bit
+//		        txBuf[(i*4)+2] = txBuf[i*4];
+//				txBuf[(i*4)+3] = txBuf[(i*4)+1];
+			}
+			/*error=equalizerProcess((int32_t*)&PlayBuff[0],(int32_t*)&PlayBuff[0]);
 			if (error != GREQ_ERROR_NONE)
 			{
 				Error_Handler();
-			}
-			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
+			}*/
+			/*for(i = 0; i < AUDIO_REC*2; i++)
 			{
-				RightRecBuff[i]=RightRecBuff[i]*3;
-				txBuf[i*4] = RightRecBuff[i]>>16 ;
-				txBuf[(i*4)+1] = (uint16_t)(RightRecBuff[i]) ;//&0xFF00 //to emit the least 8 bit
-				txBuf[(i*4)+2] = txBuf[i*4];
-				txBuf[(i*4)+3] = txBuf[(i*4)+1];
-			}
-			HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)&txBuf[AUDIO_REC], AUDIO_REC);
+				uSample32=PlayBuff[i];
+				PlayBuff[i]=  uSample32 <<16 | uSample32 >>16;
+			}*/
+			HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)&PlayBuff[0], AUDIO_REC*2);
 			DmaLeftRecBuffCplt  = 0;
 			DmaRightRecBuffCplt = 0;
 		}
@@ -212,4 +189,4 @@ void TestBlinking(void){
 }
 
 
-#endif /* INC_BODY_DFSDM_I2S_H_ */
+#endif /* INC_BODY_DFSDM_I2S_GREQ_H_ */

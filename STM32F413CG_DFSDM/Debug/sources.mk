@@ -19,5 +19,6 @@ OBJCOPY_BIN :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+DSP/Source/FilteringFunctions \
 Drivers/STM32F4xx_HAL_Driver/Src \
 

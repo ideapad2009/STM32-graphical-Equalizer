@@ -1,9 +1,7 @@
-body_DFSDM_I2S.h:55:6:playSong	8	static
-body_DFSDM_I2S.h:71:6:audioProcessHalf	8	static
-body_DFSDM_I2S.h:87:6:audioProcessFull	8	static
-body_DFSDM_I2S.h:100:5:main	8	static
-body_DFSDM_I2S.h:193:6:HAL_DFSDM_FilterRegConvHalfCpltCallback	16	static
-body_DFSDM_I2S.h:199:6:HAL_DFSDM_FilterRegConvCpltCallback	16	static
-body_DFSDM_I2S.h:207:6:TestBlinking	8	static
-main.c:73:6:SystemClock_Config	176	static
-main.c:136:6:Error_Handler	8	static
+body_DFSDM_I2S_CMSIS.h:56:6:playSong	8	static
+body_DFSDM_I2S_CMSIS.h:73:5:main	56	static
+body_DFSDM_I2S_CMSIS.h:172:6:HAL_DFSDM_FilterRegConvHalfCpltCallback	16	static
+body_DFSDM_I2S_CMSIS.h:176:6:HAL_DFSDM_FilterRegConvCpltCallback	16	static
+body_DFSDM_I2S_CMSIS.h:181:6:TestBlinking	8	static
+main.c:62:6:SystemClock_Config	176	static
+main.c:125:6:Error_Handler	8	static

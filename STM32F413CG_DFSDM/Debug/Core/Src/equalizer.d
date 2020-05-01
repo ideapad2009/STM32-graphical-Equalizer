@@ -34,8 +34,7 @@ Core/Src/equalizer.o: ../Core/Src/equalizer.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dfsdm.h \
  ../Middlewares/Common/Inc/audio_fw_glo.h \
- ../Middlewares/GREQ/Inc/greq_glo.h ../Core/Inc/Equalizer.h \
- ../Core/Inc/rtwtypes.h
+ ../Middlewares/GREQ/Inc/greq_glo.h ../Core/Inc/Equalizer.h
 
 ../Core/Inc/main.h:
 
@@ -112,5 +111,3 @@ Core/Src/equalizer.o: ../Core/Src/equalizer.c ../Core/Inc/main.h \
 ../Middlewares/GREQ/Inc/greq_glo.h:
 
 ../Core/Inc/Equalizer.h:
-
-../Core/Inc/rtwtypes.h:

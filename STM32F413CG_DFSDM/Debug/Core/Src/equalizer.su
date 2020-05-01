@@ -1,2 +1,2 @@
-equalizer.c:38:8:Equalizer_Init	24	static
-equalizer.c:81:8:equalizerProcess	24	static
+equalizer.c:37:8:Equalizer_Init	24	static
+equalizer.c:86:8:equalizerProcess	24	static
