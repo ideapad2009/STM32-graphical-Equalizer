@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -l:GrEq_32b_CM4_GCC.a
+LIBS := -l:libarm_cortexM4lf_math.a -l:GrEq_32b_CM4_GCC.a
 

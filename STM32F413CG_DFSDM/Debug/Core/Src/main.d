@@ -19,8 +19,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dac.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dac_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
@@ -32,15 +30,15 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dfsdm.h \
- ../Core/Inc/dac.h ../Core/Inc/main.h ../Core/Inc/dfsdm.h \
- ../Core/Inc/dma.h ../Core/Inc/i2c.h ../Core/Inc/i2s.h ../Core/Inc/tim.h \
- ../Core/Inc/gpio.h ../Core/Inc/body_DFSDM_I2S_CMSIS.h \
- ../Core/Inc/codec_WM8731.h ../Core/Inc/song_16.h \
- ../Core/Inc/song_24_48k.h ../Core/Inc/song_24_43k.h \
- ../Core/Inc/song_u8_43k.h \
- F:/Embedded\ Systems/STM32CubeIDE/STM32-graphical-Equalizer/STM32F413CG_DFSDM/DSP/Include/arm_math.h \
- ../Drivers/CMSIS/Include/cmsis_compiler.h
+ ../Core/Inc/dfsdm.h ../Core/Inc/main.h ../Core/Inc/dma.h \
+ ../Core/Inc/i2c.h ../Core/Inc/i2s.h ../Core/Inc/tim.h \
+ ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Inc/body_df2T_mono.h \
+ ../Core/Inc/codec_WM8731.h ../DSP/Include/arm_math.h \
+ ../Drivers/CMSIS/Include/cmsis_compiler.h ../Core/Inc/biquad_band1.h \
+ ../Core/Inc/biquad_band2.h ../Core/Inc/biquad_band3.h \
+ ../Core/Inc/biquad_band4.h ../Core/Inc/biquad_band5.h
 
 ../Core/Inc/main.h:
 
@@ -84,10 +82,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
 
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dac.h:
-
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dac_ex.h:
-
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
@@ -110,13 +104,13 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dfsdm.h:
 
-../Core/Inc/dac.h:
+../Core/Inc/dfsdm.h:
 
 ../Core/Inc/main.h:
-
-../Core/Inc/dfsdm.h:
 
 ../Core/Inc/dma.h:
 
@@ -126,20 +120,24 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Core/Inc/tim.h:
 
+../Core/Inc/usart.h:
+
 ../Core/Inc/gpio.h:
 
-../Core/Inc/body_DFSDM_I2S_CMSIS.h:
+../Core/Inc/body_df2T_mono.h:
 
 ../Core/Inc/codec_WM8731.h:
 
-../Core/Inc/song_16.h:
-
-../Core/Inc/song_24_48k.h:
-
-../Core/Inc/song_24_43k.h:
-
-../Core/Inc/song_u8_43k.h:
-
-F:/Embedded\ Systems/STM32CubeIDE/STM32-graphical-Equalizer/STM32F413CG_DFSDM/DSP/Include/arm_math.h:
+../DSP/Include/arm_math.h:
 
 ../Drivers/CMSIS/Include/cmsis_compiler.h:
+
+../Core/Inc/biquad_band1.h:
+
+../Core/Inc/biquad_band2.h:
+
+../Core/Inc/biquad_band3.h:
+
+../Core/Inc/biquad_band4.h:
+
+../Core/Inc/biquad_band5.h:
