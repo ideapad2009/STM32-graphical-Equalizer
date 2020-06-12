@@ -49,8 +49,8 @@ const uint16_t w8731_init_data[] =
 //	0x00E,	// Reg 07: Digital Audio Interface Format (i2s, 32-bit, slave)
 //  0x002,	// Reg 07: Digital Audio Interface Format (i2s, 16-bit, slave)
 	0x00A,	// Reg 07: Digital Audio Interface Format (i2s, 24-bit, slave)
-	0x000,	// Reg 08: Sampling Control (Normal,BOSR=256fs, 48k ADC/DAC)
-	//0x020,	// Reg 08: Sampling Control (Normal,BOSR=256fs, 44.1k ADC/DAC)
+	//0x000,	// Reg 08: Sampling Control (Normal,BOSR=256fs, 48k ADC/DAC)
+	0x020,	// Reg 08: Sampling Control (Normal,BOSR=256fs, 44.1k ADC/DAC)
 //	0x002,	// Reg 08: Sampling Control (Normal,BOSR=384fs, 48k ADC/DAC)
 	0x001	// Reg 09: Active Control
 };
