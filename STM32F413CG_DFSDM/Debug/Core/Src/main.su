@@ -4,4 +4,4 @@ body_df2T_mono.h:184:6:HAL_DFSDM_FilterRegConvHalfCpltCallback	16	static
 body_df2T_mono.h:188:6:HAL_DFSDM_FilterRegConvCpltCallback	16	static
 body_df2T_mono.h:192:6:TestBlinking	8	static
 main.c:72:6:SystemClock_Config	176	static
-main.c:135:6:Error_Handler	4	static
+main.c:132:6:Error_Handler	4	static
