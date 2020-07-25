@@ -20,10 +20,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dac.h"
 #include "dfsdm.h"
 #include "dma.h"
 #include "i2c.h"
-#include "i2s.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -68,7 +68,7 @@ void SystemClock_Config(void);
   * @brief  The application entry point.
   * @retval int
   */
-#include"body_df2T_mono.h"
+#include"body_DAC_DFSDM.h"
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -114,7 +114,7 @@ void SystemClock_Config(void)
   PeriphClkInitStruct.PLLI2S.PLLI2SM = 10;
   PeriphClkInitStruct.PLLI2S.PLLI2SR = 5;
   PeriphClkInitStruct.PLLI2S.PLLI2SQ = 2;
-  PeriphClkInitStruct.Dfsdm1ClockSelection = RCC_DFSDM1CLKSOURCE_SYSCLK;
+  PeriphClkInitStruct.Dfsdm1ClockSelection = RCC_DFSDM1CLKSOURCE_APB2;
   PeriphClkInitStruct.Dfsdm1AudioClockSelection = RCC_DFSDM1AUDIOCLKSOURCE_I2SAPB1;
   PeriphClkInitStruct.PLLI2SSelection = RCC_PLLI2SCLKSOURCE_PLLSRC;
   PeriphClkInitStruct.I2sApb1ClockSelection = RCC_I2SAPB1CLKSOURCE_PLLI2S;
@@ -134,10 +134,9 @@ void SystemClock_Config(void)
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-
-  /* USER CODE END Error_Handler_Debug */
+ while(1){
+	 TestBlinking();
+ }
 }
 
 #ifdef  USE_FULL_ASSERT
