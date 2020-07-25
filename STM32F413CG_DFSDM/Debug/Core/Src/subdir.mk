@@ -4,12 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/dac.c \
+../Core/Src/codec_WM8731.c \
 ../Core/Src/dfsdm.c \
 ../Core/Src/dma.c \
 ../Core/Src/equalizer.c \
 ../Core/Src/gpio.c \
 ../Core/Src/i2c.c \
+../Core/Src/i2s.c \
 ../Core/Src/main.c \
 ../Core/Src/stm32f4xx_hal_msp.c \
 ../Core/Src/stm32f4xx_it.c \
@@ -20,12 +21,13 @@ C_SRCS += \
 ../Core/Src/usart.c 
 
 OBJS += \
-./Core/Src/dac.o \
+./Core/Src/codec_WM8731.o \
 ./Core/Src/dfsdm.o \
 ./Core/Src/dma.o \
 ./Core/Src/equalizer.o \
 ./Core/Src/gpio.o \
 ./Core/Src/i2c.o \
+./Core/Src/i2s.o \
 ./Core/Src/main.o \
 ./Core/Src/stm32f4xx_hal_msp.o \
 ./Core/Src/stm32f4xx_it.o \
@@ -36,12 +38,13 @@ OBJS += \
 ./Core/Src/usart.o 
 
 C_DEPS += \
-./Core/Src/dac.d \
+./Core/Src/codec_WM8731.d \
 ./Core/Src/dfsdm.d \
 ./Core/Src/dma.d \
 ./Core/Src/equalizer.d \
 ./Core/Src/gpio.d \
 ./Core/Src/i2c.d \
+./Core/Src/i2s.d \
 ./Core/Src/main.d \
 ./Core/Src/stm32f4xx_hal_msp.d \
 ./Core/Src/stm32f4xx_it.d \
@@ -53,8 +56,8 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Core/Src/dac.o: ../Core/Src/dac.c
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/dac.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Core/Src/codec_WM8731.o: ../Core/Src/codec_WM8731.c
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/codec_WM8731.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/dfsdm.o: ../Core/Src/dfsdm.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/dfsdm.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/dma.o: ../Core/Src/dma.c
@@ -65,6 +68,8 @@ Core/Src/gpio.o: ../Core/Src/gpio.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/gpio.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/i2c.o: ../Core/Src/i2c.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/i2c.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Core/Src/i2s.o: ../Core/Src/i2s.c
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/i2s.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/main.o: ../Core/Src/main.c
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F413xx '-DARM_MATH_CM4=1' -DDEBUG -c -I"../DSP/Include" -I../Drivers/CMSIS/Include -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I"../Middlewares/Common/Inc" -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I"../Middlewares/GREQ/Inc" -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c

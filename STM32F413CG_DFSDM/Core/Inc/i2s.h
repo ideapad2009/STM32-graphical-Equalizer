@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : DAC.h
+  * File Name          : I2S.h
   * Description        : This file provides code for the configuration
-  *                      of the DAC instances.
+  *                      of the I2S instances.
   ******************************************************************************
   * @attention
   *
@@ -17,8 +17,8 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __dac_H
-#define __dac_H
+#ifndef __i2s_H
+#define __i2s_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -30,13 +30,13 @@
 
 /* USER CODE END Includes */
 
-extern DAC_HandleTypeDef hdac;
+extern I2S_HandleTypeDef hi2s3;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_DAC_Init(void);
+void MX_I2S3_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
@@ -45,7 +45,7 @@ void MX_DAC_Init(void);
 #ifdef __cplusplus
 }
 #endif
-#endif /*__ dac_H */
+#endif /*__ i2s_H */
 
 /**
   * @}

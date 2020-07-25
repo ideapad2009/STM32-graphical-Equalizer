@@ -13,17 +13,16 @@
   hdfsdm1_filter0.Init.InjectedParam.DmaMode        = DISABLE;
   hdfsdm1_filter0.Init.InjectedParam.ExtTrigger     = DFSDM_FILTER_EXT_TRIG_TIM1_TRGO;
   hdfsdm1_filter0.Init.InjectedParam.ExtTriggerEdge = DFSDM_FILTER_EXT_TRIG_FALLING_EDGE;*/
-//#include "codec_WM8731.h"
+#include "codec_WM8731.h"
 #include <math.h>
 #include "song_16.h"
-#include "song_16_32k.h"
-//#include "song_24_48k.h"
-//#include "song_24_43k.h"
-//#include <song_u8_43k.h>
+#include "song_24_48k.h"
+#include "song_24_43k.h"
+#include <song_u8_43k.h>
 #define W8731_ADDR_0 			     0x1A // this is the address of the CODEC when CSB is low
 #define CODEC_ADDRESS               (W8731_ADDR_0<<1)
 #define SaturaLH(N, L, H)           (((N)<(L))?(L):(((N)>(H))?(H):(N)))
-#define AUDIO_REC      	            100
+#define AUDIO_REC      	            48
 
 
 uint32_t i,j;
@@ -47,21 +46,8 @@ uint8_t DmaRightRecHalfBuffCplt = 0;
 uint8_t DmaRightRecBuffCplt     = 0;
 uint8_t PlaybackStarted         = 0;
 
-
 void TestBlinking(void);
 void delay(uint32_t ms);
-void playSong(void){
-	if (x < (SONG_SIZE_16_32k -1 )){
-		for(i = 0,j=x; i < AUDIO_REC; i++,j++)
-		{
-			uSample16= (int16_t)song_16_32k[j] + 32768 ;
-			txBuf[i] =uSample16 >>4;
-
-		}
-		x = x+AUDIO_REC;
-	}
-	else {x=0;playSong();}
-	}
 
 int main(void)
 {
@@ -70,16 +56,15 @@ int main(void)
 	MX_GPIO_Init();
 	MX_DMA_Init();
 	MX_I2C1_Init();
-	//MX_I2S3_Init();
+	MX_I2S3_Init();
 	MX_DFSDM1_Init();
 	MX_DAC_Init();
 	MX_TIM6_Init();
-	MX_UART5_Init();
-	TestBlinking();
+
 
 	HAL_TIM_Base_Start(&htim6);
 	HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
-
+	TestBlinking();
 
 	//__HAL_UNLOCK(&hi2s3);     // THIS IS EXTREMELY IMPORTANT FOR I2S3 TO WORK!!
 	//__HAL_I2S_ENABLE(&hi2s3);
@@ -96,9 +81,6 @@ int main(void)
 			Error_Handler();
 		}*/
 
-	//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)txBuf, AUDIO_REC, DAC_ALIGN_12B_R));
-
-
 	while (1)
 	{
 
@@ -107,31 +89,30 @@ int main(void)
 
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				//sample16 =  SaturaLH((RightRecBuff[i] >> 8), -4096, 4096);
-				sample16 =  RightRecBuff[i] >> 8;
-				uSample16 = (int16_t)sample16 + 4096;
+				sample16 =  SaturaLH((RightRecBuff[i] >> 8), -32768, 32767);
+				uSample16 = (int16_t)sample16 + 32767;
 				//HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, uSample16>>4);
-				txBuf[i] = (uSample16>>1) ;
+				txBuf[i] = (uSample16>>4) ;
 			}
-			//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t* )&txBuf[0], AUDIO_REC/2, DAC_ALIGN_12B_R);
-			if(PlaybackStarted == 0)
+			HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, txBuf, AUDIO_REC, DAC_ALIGN_12B_R);
+			/*if(PlaybackStarted == 0)
 			{
 				HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, txBuf, AUDIO_REC, DAC_ALIGN_12B_R);
 				PlaybackStarted = 1;
-			}
+			}*/
 			DmaLeftRecHalfBuffCplt  = 0;
 			DmaRightRecHalfBuffCplt = 0;
 		}
 		if( (DmaRightRecBuffCplt == 1))
 		{
-			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
+			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				sample16 = RightRecBuff[i] >> 8;
-				uSample16 = (int16_t)sample16 + 4096;
+				sample16 =  SaturaLH((RightRecBuff[i] >> 8), -32768, 32767);
+				uSample16 = (int16_t)sample16 + 32767;
 				//HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, uSample16>>4);
-				txBuf[i] = (uSample16>>1) ;
+				txBuf[i] = (uSample16>>4) ;
 			}
-			//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t* )&txBuf[AUDIO_REC/2], AUDIO_REC/2, DAC_ALIGN_12B_R);
+			//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, &txBuf[AUDIO_REC/2], AUDIO_REC/2, DAC_ALIGN_12B_R);
 
 			DmaLeftRecBuffCplt  = 0;
 			DmaRightRecBuffCplt = 0;
@@ -151,11 +132,6 @@ int main(void)
 	}
 
 }*/
-/*void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef* hdac)
-{
-	//playSong();
-	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-}*/
 void HAL_DFSDM_FilterRegConvHalfCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
 		DmaRightRecHalfBuffCplt = 1;
@@ -167,7 +143,13 @@ void HAL_DFSDM_FilterRegConvCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filt
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
 	//DAC_FLAG=1;
 }
-
+void delay(uint32_t ms){
+	ms+=1000;
+	uint64_t i;
+	for ( i = 0 ; i< ms*100 ; i++){
+		asm("NOP");
+	}
+}
 void TestBlinking(void){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 	//delay(1000);
