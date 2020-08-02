@@ -23,32 +23,25 @@
 #define MAX_GAIN                      100
 
 uint32_t i,j;
-uint32_t x= 0 ;
 int32_t RightRecBuff[AUDIO_REC]={0};
-//int32_t LeftRecBuff[AUDIO_REC]={0};
+
 int32_t PlayBuff[AUDIO_REC*4]={0}; // playBuff =2* AUDIO_REC coming from DFSDM (as we are duplicating the input signal to stereo)
 uint16_t txBuf[AUDIO_REC*4]={0};
-float r_buf_in [AUDIO_REC];
-float r_buf_out [AUDIO_REC];
+float buf_in [AUDIO_REC];
+float buf_out [AUDIO_REC];
 uint8_t Uart_array[2];
 
 uint32_t uSample32 =0;
 uint16_t uSample16 =0;
 int16_t  sample16=0;
 int32_t  Sample32 =0;
-uint8_t DmaLeftRecHalfBuffCplt  = 0;
-uint8_t DmaLeftRecBuffCplt      = 0;
+
 uint8_t DmaRightRecHalfBuffCplt = 0;
 uint8_t DmaRightRecBuffCplt     = 0;
 uint8_t PlaybackStarted         = 0;
 //arm_biquad_casd_df1_inst_f32 arm_biquad_cascade_df2T_instance_f32
 arm_biquad_cascade_df2T_instance_f32 S1, S2, S3,S4,S5;
 float biquadStateBand1[4 * NUMSTAGES],biquadStateBand2[4 * NUMSTAGES],biquadStateBand3[4 * NUMSTAGES],biquadStateBand4[4 * NUMSTAGES],biquadStateBand5[4 * NUMSTAGES];
-//lowPass filter f_cut =1000
-float coeffTable[5*NUMSTAGES] =
-{0.000015551721780892f, 0.000031103443561783f, 0.000015551721780892f, 1.769504348512840108f, -0.784773331782564032f,
-		1.f, 2.f, 1.f, 1.888555953889039962f, -0.904852228768565969f};
-
 int gainDB[5] = {10,10,5,6,7};
 
 void TestBlinking(void);
@@ -87,15 +80,15 @@ int main(void)
 		{
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				r_buf_in[i]= (float) RightRecBuff[i];
+				buf_in[i]= (float) RightRecBuff[i];
 			}
 			//arm_biquad_cascade_df1_f32
 			///arm_biquad_cascade_df2T_f32
 			/*arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&r_buf_in[0], &r_buf_out[0],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S2, &r_buf_out[0],&r_buf_out[0],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S3, &r_buf_out[0],&r_buf_out[0],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S4, &r_buf_out[0],&r_buf_out[0],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S5, &r_buf_out[0],&r_buf_out[0],AUDIO_REC/2);*/
+			arm_biquad_cascade_df2T_f32(&S2, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S3, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S4, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[0],&buf_out[0],AUDIO_REC/2);*/
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
 				txBuf[i*4]  =  ((int)RightRecBuff[i])>>16;
@@ -112,20 +105,19 @@ int main(void)
 				}
 				PlaybackStarted = 1;
 			}
-			DmaLeftRecHalfBuffCplt  = 0;
 			DmaRightRecHalfBuffCplt = 0;
 		}
 		if( (DmaRightRecBuffCplt == 1))
 		{
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
 			{
-				r_buf_in[i]= (float) RightRecBuff[i];
+				buf_in[i]= (float) RightRecBuff[i];
 			}
-			/*arm_biquad_cascade_df2T_f32(&S1,(float32_t *)&r_buf_in[AUDIO_REC/2] , &r_buf_out[AUDIO_REC/2],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S2, &r_buf_out[AUDIO_REC/2],&r_buf_out[AUDIO_REC/2],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S3, &r_buf_out[AUDIO_REC/2],&r_buf_out[AUDIO_REC/2],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S4, &r_buf_out[AUDIO_REC/2],&r_buf_out[AUDIO_REC/2],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S5, &r_buf_out[AUDIO_REC/2],&r_buf_out[AUDIO_REC/2],AUDIO_REC/2);*/
+			/*arm_biquad_cascade_df2T_f32(&S1,(float32_t *)&buf_in[AUDIO_REC/2] , &buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S2, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S3, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S4, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);*/
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
 			{
 				txBuf[i*4]  =  ((int)RightRecBuff[i])>>16;
@@ -139,7 +131,6 @@ int main(void)
 				PlayBuff[i]=  uSample32 <<16 | uSample32 >>16;
 			}*/
 			//HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t *)&txBuf[0], AUDIO_REC*2);
-			DmaLeftRecBuffCplt  = 0;
 			DmaRightRecBuffCplt = 0;
 		}
 
@@ -183,7 +174,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 }
 void HAL_DFSDM_FilterRegConvHalfCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
-		DmaRightRecHalfBuffCplt = 1;
+	DmaRightRecHalfBuffCplt = 1;
 }
 void HAL_DFSDM_FilterRegConvCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
