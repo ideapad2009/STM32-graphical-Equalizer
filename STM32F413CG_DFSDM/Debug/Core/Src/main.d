@@ -38,8 +38,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../DSP/Include/arm_math.h ../Drivers/CMSIS/Include/cmsis_compiler.h \
  ../Core/Inc/biquad_band1.h ../Core/Inc/biquad_band2.h \
  ../Core/Inc/biquad_band3.h ../Core/Inc/biquad_band4.h \
- ../Core/Inc/biquad_band5.h ../Core/Inc/song_16.h \
- ../Core/Inc/song_16_32k.h
+ ../Core/Inc/biquad_band5.h
 
 ../Core/Inc/main.h:
 
@@ -140,7 +139,3 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/biquad_band4.h:
 
 ../Core/Inc/biquad_band5.h:
-
-../Core/Inc/song_16.h:
-
-../Core/Inc/song_16_32k.h:
