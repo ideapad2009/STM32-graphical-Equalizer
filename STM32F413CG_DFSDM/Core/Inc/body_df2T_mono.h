@@ -41,13 +41,10 @@ uint8_t DmaLeftRecBuffCplt      = 0;
 uint8_t DmaRightRecHalfBuffCplt = 0;
 uint8_t DmaRightRecBuffCplt     = 0;
 uint8_t PlaybackStarted         = 0;
-//arm_biquad_casd_df1_inst_f32 arm_biquad_cascade_df2T_instance_f32
+
 arm_biquad_cascade_df2T_instance_f32 S1, S2, S3,S4,S5;
 float biquadStateBand1[4 * NUMSTAGES],biquadStateBand2[4 * NUMSTAGES],biquadStateBand3[4 * NUMSTAGES],biquadStateBand4[4 * NUMSTAGES],biquadStateBand5[4 * NUMSTAGES];
-//lowPass filter f_cut =1000
-float coeffTable[5*NUMSTAGES] =
-{0.000015551721780892f, 0.000031103443561783f, 0.000015551721780892f, 1.769504348512840108f, -0.784773331782564032f,
-		1.f, 2.f, 1.f, 1.888555953889039962f, -0.904852228768565969f};
+
 
 int gainDB[5] = {10,10,5,6,7};
 

@@ -14,17 +14,19 @@
   hdfsdm1_filter0.Init.InjectedParam.ExtTrigger     = DFSDM_FILTER_EXT_TRIG_TIM1_TRGO;
   hdfsdm1_filter0.Init.InjectedParam.ExtTriggerEdge = DFSDM_FILTER_EXT_TRIG_FALLING_EDGE;*/
 //#include "codec_WM8731.h"
-#include <math.h>
-#include "song_16.h"
-#include "song_16_32k.h"
-//#include "song_24_48k.h"
-//#include "song_24_43k.h"
-//#include <song_u8_43k.h>
+#include "arm_math.h"
+#include "biquad_band1.h"
+#include "biquad_band2.h"
+#include "biquad_band3.h"
+#include "biquad_band4.h"
+#include "biquad_band5.h"
+
 #define W8731_ADDR_0 			     0x1A // this is the address of the CODEC when CSB is low
 #define CODEC_ADDRESS               (W8731_ADDR_0<<1)
 #define SaturaLH(N, L, H)           (((N)<(L))?(L):(((N)>(H))?(H):(N)))
-#define AUDIO_REC      	            100
-
+#define AUDIO_REC      	            200
+#define NUMSTAGES                     3       // Number of 2nd order Biquad stages per filter
+#define MAX_GAIN                      100
 
 uint32_t i,j;
 uint32_t x= 0 ;
@@ -35,6 +37,10 @@ int16_t RecBuff[AUDIO_REC*2]={0};
 
 uint16_t PlayBuff[AUDIO_REC*2]={0}; // playBuff =2* AUDIO_REC coming from DFSDM (as we are duplicating the input signal to stereo)
 uint16_t txBuf[AUDIO_REC*8]={0};
+float buf_in [AUDIO_REC];
+float buf_out [AUDIO_REC];
+uint8_t Uart_array[2];
+
 int32_t  Sample32 =0;
 int32_t  Sample32_ =0;
 uint32_t uSample32 =0;
@@ -46,22 +52,11 @@ uint8_t DmaLeftRecBuffCplt      = 0;
 uint8_t DmaRightRecHalfBuffCplt = 0;
 uint8_t DmaRightRecBuffCplt     = 0;
 uint8_t PlaybackStarted         = 0;
-
+arm_biquad_cascade_df2T_instance_f32 S1, S2, S3,S4,S5;
+float biquadStateBand1[4 * NUMSTAGES],biquadStateBand2[4 * NUMSTAGES],biquadStateBand3[4 * NUMSTAGES],biquadStateBand4[4 * NUMSTAGES],biquadStateBand5[4 * NUMSTAGES];
+int gainDB[5] = {10,10,5,6,7};
 
 void TestBlinking(void);
-void delay(uint32_t ms);
-void playSong(void){
-	if (x < (SONG_SIZE_16_32k -1 )){
-		for(i = 0,j=x; i < AUDIO_REC; i++,j++)
-		{
-			uSample16= (int16_t)song_16_32k[j] + 32768 ;
-			txBuf[i] =uSample16 >>4;
-
-		}
-		x = x+AUDIO_REC;
-	}
-	else {x=0;playSong();}
-	}
 
 int main(void)
 {
@@ -87,6 +82,13 @@ int main(void)
 //		TestBlinking();
 //	}
 	//Codec_Reset(&hi2c1);
+
+	//10*(gainDB[0]+10)  ==> first 10 is for (5*NUMSTAGES)  , second 10 is for -10 to 10 gainDB
+	arm_biquad_cascade_df2T_init_f32(&S1, NUMSTAGES,&band1_coeff[ (5*NUMSTAGES)*(gainDB[0]+MAX_GAIN)],&biquadStateBand1[0]);
+	arm_biquad_cascade_df2T_init_f32(&S2, NUMSTAGES,&band2_coeff[ (5*NUMSTAGES)*(gainDB[1]+MAX_GAIN)],&biquadStateBand2[0]);
+	arm_biquad_cascade_df2T_init_f32(&S3, NUMSTAGES,&band3_coeff[ (5*NUMSTAGES)*(gainDB[2]+MAX_GAIN)],&biquadStateBand3[0]);
+	arm_biquad_cascade_df2T_init_f32(&S4, NUMSTAGES,&band4_coeff[ (5*NUMSTAGES)*(gainDB[3]+MAX_GAIN)],&biquadStateBand4[0]);
+	arm_biquad_cascade_df2T_init_f32(&S5, NUMSTAGES,&band5_coeff[ (5*NUMSTAGES)*(gainDB[4]+MAX_GAIN)],&biquadStateBand5[0]);
 	if(HAL_OK != HAL_DFSDM_FilterRegularStart_DMA(&hdfsdm1_filter0, RightRecBuff, AUDIO_REC))
 	{
 		Error_Handler();
@@ -98,7 +100,7 @@ int main(void)
 
 	//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)txBuf, AUDIO_REC, DAC_ALIGN_12B_R));
 
-
+	HAL_UART_Receive_DMA(&huart5, Uart_array, 2);
 	while (1)
 	{
 
@@ -107,10 +109,18 @@ int main(void)
 
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				//sample16 =  SaturaLH((RightRecBuff[i] >> 8), -4096, 4096);
-				sample16 =  RightRecBuff[i] >> 8;
-				uSample16 = (int16_t)sample16 + 4096;
-				//HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, uSample16>>4);
+				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
+			}
+			arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&buf_in[0], &buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S2, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S3, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S4, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[0],&buf_out[0],AUDIO_REC/2);
+			for(i = 0; i < AUDIO_REC/2; i++)
+			{
+				sample16 = ((int)buf_out[i]);
+				//sample16 =  RightRecBuff[i] >> 8;
+				uSample16 = ((int)sample16) + 4096;
 				txBuf[i] = (uSample16>>1) ;
 			}
 			//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t* )&txBuf[0], AUDIO_REC/2, DAC_ALIGN_12B_R);
@@ -126,9 +136,18 @@ int main(void)
 		{
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
 			{
-				sample16 = RightRecBuff[i] >> 8;
-				uSample16 = (int16_t)sample16 + 4096;
-				//HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, uSample16>>4);
+				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
+			}
+			arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&buf_in[AUDIO_REC/2], &buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S2, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S3, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S4, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
+			{
+				sample16 = ((int)buf_out[i]);
+				//sample16 =  RightRecBuff[i] >> 8;
+				uSample16 = ((int)sample16) + 4096;
 				txBuf[i] = (uSample16>>1) ;
 			}
 			//HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t* )&txBuf[AUDIO_REC/2], AUDIO_REC/2, DAC_ALIGN_12B_R);
@@ -165,15 +184,41 @@ void HAL_DFSDM_FilterRegConvCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filt
 
 	DmaRightRecBuffCplt = 1;
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
-	//DAC_FLAG=1;
 }
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	switch((int8_t)Uart_array[0])
+	{
+	case 1:
+		gainDB[0] =(int8_t)(Uart_array[1]);
+		//S1.pCoeffs=&band1_coeff[(5*NUMSTAGES)*(gainDB[0]+10)];
+		arm_biquad_cascade_df2T_init_f32(&S1, NUMSTAGES,&band1_coeff[ (5*NUMSTAGES)*(gainDB[0]+MAX_GAIN)],&biquadStateBand1[0]);
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		break;
+	case 2:
+		gainDB[1] =(int8_t)(Uart_array[1]);
+		//S2.pCoeffs=&band2_coeff[(5*NUMSTAGES)*(gainDB[1]+10)];
+		arm_biquad_cascade_df2T_init_f32(&S2, NUMSTAGES,&band2_coeff[ (5*NUMSTAGES)*(gainDB[1]+MAX_GAIN)],&biquadStateBand2[0]);
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		break;
+	case 3:
+		gainDB[2] =(int8_t)(Uart_array[1]);
+		arm_biquad_cascade_df2T_init_f32(&S3, NUMSTAGES,&band3_coeff[ (5*NUMSTAGES)*(gainDB[2]+MAX_GAIN)],&biquadStateBand3[0]);
+		break;
+	case 4:
+		gainDB[3] =(int8_t)(Uart_array[1]);
+		arm_biquad_cascade_df2T_init_f32(&S4, NUMSTAGES,&band4_coeff[ (5*NUMSTAGES)*(gainDB[3]+MAX_GAIN)],&biquadStateBand4[0]);
+		break;
+	case 5:
+		gainDB[4] =(int8_t)(Uart_array[1]);
+		arm_biquad_cascade_df2T_init_f32(&S5, NUMSTAGES,&band5_coeff[ (5*NUMSTAGES)*(gainDB[4]+MAX_GAIN)],&biquadStateBand5[0]);
+		break;
+	}
+}
 void TestBlinking(void){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-	//delay(1000);
 	HAL_Delay(1000);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-	//delay(1000);
 	HAL_Delay(1000);
 }
 
