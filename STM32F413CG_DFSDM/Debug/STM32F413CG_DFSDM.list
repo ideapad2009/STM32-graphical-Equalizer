@@ -1777,7 +1777,7 @@ int main(void)
  8000e0c:	601a      	str	r2, [r3, #0]
  8000e0e:	e014      	b.n	8000e3a <main+0x136>
 			{
-				buf_in[i]= (float) RightRecBuff[i];
+				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
  8000e10:	4b81      	ldr	r3, [pc, #516]	; (8001018 <main+0x314>)
  8000e12:	681b      	ldr	r3, [r3, #0]
  8000e14:	4a7b      	ldr	r2, [pc, #492]	; (8001004 <main+0x300>)
@@ -1800,18 +1800,18 @@ int main(void)
  8000e3c:	681b      	ldr	r3, [r3, #0]
  8000e3e:	2b63      	cmp	r3, #99	; 0x63
  8000e40:	d9e6      	bls.n	8000e10 <main+0x10c>
-			/*arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&r_buf_in[0], &r_buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&buf_in[0], &buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S2, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S3, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S4, &buf_out[0],&buf_out[0],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S5, &buf_out[0],&buf_out[0],AUDIO_REC/2);*/
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			for(i = 0; i < AUDIO_REC/2; i++)
  8000e42:	4b75      	ldr	r3, [pc, #468]	; (8001018 <main+0x314>)
  8000e44:	2200      	movs	r2, #0
  8000e46:	601a      	str	r2, [r3, #0]
  8000e48:	e039      	b.n	8000ebe <main+0x1ba>
 			{
-				txBuf[i*4]  =  ((int)RightRecBuff[i])>>16;
+				txBuf[i*4]  =  ((int)buf_out[i])>>8;
  8000e4a:	4b73      	ldr	r3, [pc, #460]	; (8001018 <main+0x314>)
  8000e4c:	681b      	ldr	r3, [r3, #0]
  8000e4e:	4a6d      	ldr	r2, [pc, #436]	; (8001004 <main+0x300>)
@@ -1823,7 +1823,7 @@ int main(void)
  8000e5c:	b291      	uxth	r1, r2
  8000e5e:	4a70      	ldr	r2, [pc, #448]	; (8001020 <main+0x31c>)
  8000e60:	f822 1013 	strh.w	r1, [r2, r3, lsl #1]
-				txBuf[(i*4)+1]= ((int)RightRecBuff[i])&0xFFFF;
+				txBuf[(i*4)+1]= ((int)buf_out[i])&0xFFFF;
  8000e64:	4b6c      	ldr	r3, [pc, #432]	; (8001018 <main+0x314>)
  8000e66:	681b      	ldr	r3, [r3, #0]
  8000e68:	4a66      	ldr	r2, [pc, #408]	; (8001004 <main+0x300>)
@@ -1912,7 +1912,7 @@ int main(void)
  8000efc:	601a      	str	r2, [r3, #0]
  8000efe:	e014      	b.n	8000f2a <main+0x226>
 			{
-				buf_in[i]= (float) RightRecBuff[i];
+				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
  8000f00:	4b45      	ldr	r3, [pc, #276]	; (8001018 <main+0x314>)
  8000f02:	681b      	ldr	r3, [r3, #0]
  8000f04:	4a3f      	ldr	r2, [pc, #252]	; (8001004 <main+0x300>)
@@ -1935,18 +1935,18 @@ int main(void)
  8000f2c:	681b      	ldr	r3, [r3, #0]
  8000f2e:	2bc7      	cmp	r3, #199	; 0xc7
  8000f30:	d9e6      	bls.n	8000f00 <main+0x1fc>
-			/*arm_biquad_cascade_df2T_f32(&S1,(float32_t *)&buf_in[AUDIO_REC/2] , &buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S1,(float32_t *)&buf_in[AUDIO_REC/2] , &buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S2, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S3, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S4, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S5, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);*/
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
  8000f32:	4b39      	ldr	r3, [pc, #228]	; (8001018 <main+0x314>)
  8000f34:	2264      	movs	r2, #100	; 0x64
  8000f36:	601a      	str	r2, [r3, #0]
  8000f38:	e039      	b.n	8000fae <main+0x2aa>
 			{
-				txBuf[i*4]  =  ((int)RightRecBuff[i])>>16;
+				txBuf[i*4]  =  ((int)buf_out[i])>>8;
  8000f3a:	4b37      	ldr	r3, [pc, #220]	; (8001018 <main+0x314>)
  8000f3c:	681b      	ldr	r3, [r3, #0]
  8000f3e:	4a31      	ldr	r2, [pc, #196]	; (8001004 <main+0x300>)
@@ -1958,7 +1958,7 @@ int main(void)
  8000f4c:	b291      	uxth	r1, r2
  8000f4e:	4a34      	ldr	r2, [pc, #208]	; (8001020 <main+0x31c>)
  8000f50:	f822 1013 	strh.w	r1, [r2, r3, lsl #1]
-				txBuf[(i*4)+1]= ((int)RightRecBuff[i])&0xFFFF;
+				txBuf[(i*4)+1]= ((int)buf_out[i])&0xFFFF;
  8000f54:	4b30      	ldr	r3, [pc, #192]	; (8001018 <main+0x314>)
  8000f56:	681b      	ldr	r3, [r3, #0]
  8000f58:	4a2a      	ldr	r2, [pc, #168]	; (8001004 <main+0x300>)
