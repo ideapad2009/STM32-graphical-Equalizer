@@ -58,14 +58,14 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* i2sHandle)
   /* USER CODE END SPI3_MspInit 0 */
     /* I2S3 clock enable */
     __HAL_RCC_SPI3_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOB_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**I2S3 GPIO Configuration    
+    /**I2S3 GPIO Configuration
     PB10     ------> I2S3_MCK
     PA15     ------> I2S3_WS
     PB3     ------> I2S3_CK
-    PB5     ------> I2S3_SD 
+    PB5     ------> I2S3_SD
     */
     GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_3|GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -116,12 +116,12 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef* i2sHandle)
   /* USER CODE END SPI3_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_SPI3_CLK_DISABLE();
-  
-    /**I2S3 GPIO Configuration    
+
+    /**I2S3 GPIO Configuration
     PB10     ------> I2S3_MCK
     PA15     ------> I2S3_WS
     PB3     ------> I2S3_CK
-    PB5     ------> I2S3_SD 
+    PB5     ------> I2S3_SD
     */
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10|GPIO_PIN_3|GPIO_PIN_5);
 
@@ -133,7 +133,7 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef* i2sHandle)
 
   /* USER CODE END SPI3_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 
