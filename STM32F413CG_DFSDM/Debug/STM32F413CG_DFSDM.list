@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  15 .debug_ranges 00000dc8  00000000  00000000  00046130  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_macro  00022fdf  00000000  00000000  00046ef8  2**0
+ 16 .debug_macro  000230e9  00000000  00000000  00046ef8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_line   0000f88a  00000000  00000000  00069ed7  2**0
+ 17 .debug_line   0000f88a  00000000  00000000  00069fe1  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    000d472f  00000000  00000000  00079761  2**0
+ 18 .debug_str    000d4c60  00000000  00000000  0007986b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      000000f0  00000000  00000000  0014de90  2**0
+ 19 .comment      000000f0  00000000  00000000  0014e4cb  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00003d98  00000000  00000000  0014df80  2**2
+ 20 .debug_frame  00003d98  00000000  00000000  0014e5bc  2**2
                   CONTENTS, READONLY, DEBUGGING
- 21 .debug_loc    00000d34  00000000  00000000  00151d18  2**0
+ 21 .debug_loc    00000d34  00000000  00000000  00152354  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -2430,7 +2430,8 @@ void SystemClock_Config(void)
  800133a:	f403 4340 	and.w	r3, r3, #49152	; 0xc000
  800133e:	603b      	str	r3, [r7, #0]
  8001340:	683b      	ldr	r3, [r7, #0]
-  /** Initializes the CPU, AHB and APB busses clocks
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
  8001342:	2302      	movs	r3, #2
@@ -2473,7 +2474,7 @@ void SystemClock_Config(void)
     Error_Handler();
  800138c:	f000 f83c 	bl	8001408 <Error_Handler>
   }
-  /** Initializes the CPU, AHB and APB busses clocks
+  /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
  8001390:	230f      	movs	r3, #15
