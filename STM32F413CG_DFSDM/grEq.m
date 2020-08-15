@@ -111,6 +111,7 @@ fclose(file_B5);
 
 %h=fvtool(a{:},b{:},c{:},d{:},e{:},'Fs',Fs);
 
-%fvtool(BQ1,BQ2,'Fs',Fs,'FrequencyScale','Log');
-
+%{
+fvtool(BQ1,BQ2,'Fs',Fs,'FrequencyScale','Log');
 %legend('Equalizer centered at 100 Hz','Equalizer centered at 1000 Hz');
+%}

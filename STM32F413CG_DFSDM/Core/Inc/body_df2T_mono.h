@@ -22,7 +22,7 @@
 #define NUMSTAGES                     3       // Number of 2nd order Biquad stages per filter
 #define MAX_GAIN                      100
 
-uint32_t i,j;
+uint32_t i;
 int32_t RightRecBuff[AUDIO_REC]={0};
 
 int32_t PlayBuff[AUDIO_REC*4]={0}; // playBuff =2* AUDIO_REC coming from DFSDM (as we are duplicating the input signal to stereo)
@@ -35,10 +35,10 @@ uint32_t uSample32 =0;
 uint16_t uSample16 =0;
 int16_t  sample16=0;
 int32_t  Sample32 =0;
-
 uint8_t DmaRightRecHalfBuffCplt = 0;
 uint8_t DmaRightRecBuffCplt     = 0;
 uint8_t PlaybackStarted         = 0;
+
 //arm_biquad_casd_df1_inst_f32 arm_biquad_cascade_df2T_instance_f32
 arm_biquad_cascade_df2T_instance_f32 S1, S2, S3,S4,S5;
 float biquadStateBand1[4 * NUMSTAGES],biquadStateBand2[4 * NUMSTAGES],biquadStateBand3[4 * NUMSTAGES],biquadStateBand4[4 * NUMSTAGES],biquadStateBand5[4 * NUMSTAGES];
@@ -80,19 +80,19 @@ int main(void)
 		{
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				buf_in[i]= (float) RightRecBuff[i];
+				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
 			}
 			//arm_biquad_cascade_df1_f32
 			///arm_biquad_cascade_df2T_f32
-			/*arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&r_buf_in[0], &r_buf_out[0],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&buf_in[0], &buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S2, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S3, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S4, &buf_out[0],&buf_out[0],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S5, &buf_out[0],&buf_out[0],AUDIO_REC/2);*/
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			for(i = 0; i < AUDIO_REC/2; i++)
 			{
-				txBuf[i*4]  =  ((int)RightRecBuff[i])>>16;
-				txBuf[(i*4)+1]= ((int)RightRecBuff[i])&0xFFFF;
+				txBuf[i*4]  =  ((int)buf_out[i])>>8;
+				txBuf[(i*4)+1]= ((int)buf_out[i])&0xFFFF;
 				txBuf[(i*4)+2] = txBuf[i*4];
 				txBuf[(i*4)+3] = txBuf[(i*4)+1];
 			}
@@ -111,17 +111,17 @@ int main(void)
 		{
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
 			{
-				buf_in[i]= (float) RightRecBuff[i];
+				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
 			}
-			/*arm_biquad_cascade_df2T_f32(&S1,(float32_t *)&buf_in[AUDIO_REC/2] , &buf_out[AUDIO_REC/2],AUDIO_REC/2);
+			arm_biquad_cascade_df2T_f32(&S1,(float32_t *)&buf_in[AUDIO_REC/2] , &buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S2, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S3, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S4, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
-			arm_biquad_cascade_df2T_f32(&S5, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);*/
+			arm_biquad_cascade_df2T_f32(&S5, &buf_out[AUDIO_REC/2],&buf_out[AUDIO_REC/2],AUDIO_REC/2);
 			for(i = AUDIO_REC/2; i < AUDIO_REC; i++)
 			{
-				txBuf[i*4]  =  ((int)RightRecBuff[i])>>16;
-				txBuf[(i*4)+1]= ((int)RightRecBuff[i])&0xFFFF;
+				txBuf[i*4]  =  ((int)buf_out[i])>>8;
+				txBuf[(i*4)+1]= ((int)buf_out[i])&0xFFFF;
 				txBuf[(i*4)+2] = txBuf[i*4];
 				txBuf[(i*4)+3] = txBuf[(i*4)+1];
 			}
