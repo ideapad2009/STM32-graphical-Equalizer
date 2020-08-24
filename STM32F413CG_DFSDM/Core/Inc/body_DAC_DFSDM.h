@@ -30,9 +30,6 @@
 
 
 int32_t RightRecBuff[AUDIO_REC*4]={0};
-int16_t RecBuff[AUDIO_REC*2]={0};
-
-uint16_t PlayBuff[AUDIO_REC*2]={0}; // playBuff =2* AUDIO_REC coming from DFSDM (as we are duplicating the input signal to stereo)
 uint16_t txBuf[AUDIO_REC*8]={0};
 float buf_in [AUDIO_REC];
 float buf_out [AUDIO_REC];
@@ -146,29 +143,17 @@ int main(void)
 
 /*void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef* hdac)
 {
-	static int x =0;
-	x++;
-	if (x == 48){
-	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);}
-	if ( x > 48){
-		x=0;
-	}
-
-}*/
-/*void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef* hdac)
+}
+void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef* hdac)
 {
-	//playSong();
-	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 }*/
 void HAL_DFSDM_FilterRegConvHalfCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
-		DmaRightRecHalfBuffCplt = 1;
+	DmaRightRecHalfBuffCplt = 1;
 }
 void HAL_DFSDM_FilterRegConvCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
-
 	DmaRightRecBuffCplt = 1;
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
 }
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {

@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0002ebac  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00016783  00000000  00000000  0002ebdc  2**0
+ 12 .debug_info   0001673f  00000000  00000000  0002ebdc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_abbrev 00003043  00000000  00000000  0004535f  2**0
+ 13 .debug_abbrev 00003043  00000000  00000000  0004531b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_aranges 000013d0  00000000  00000000  000483a8  2**3
+ 14 .debug_aranges 000013d0  00000000  00000000  00048360  2**3
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00001248  00000000  00000000  00049778  2**3
+ 15 .debug_ranges 00001248  00000000  00000000  00049730  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_macro  00023356  00000000  00000000  0004a9c0  2**0
+ 16 .debug_macro  00023356  00000000  00000000  0004a978  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_line   0001145b  00000000  00000000  0006dd16  2**0
+ 17 .debug_line   0001145b  00000000  00000000  0006dcce  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    000d555f  00000000  00000000  0007f171  2**0
+ 18 .debug_str    000d5556  00000000  00000000  0007f129  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      000000f0  00000000  00000000  001546d0  2**0
+ 19 .comment      000000f0  00000000  00000000  0015467f  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000052a4  00000000  00000000  001547c0  2**2
+ 20 .debug_frame  000052a4  00000000  00000000  00154770  2**2
                   CONTENTS, READONLY, DEBUGGING
- 21 .debug_loc    00000d34  00000000  00000000  00159a64  2**0
+ 21 .debug_loc    00000d34  00000000  00000000  00159a14  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1896,9 +1896,9 @@ int main(void)
  8000f64:	20010c6c 	.word	0x20010c6c
 
 08000f68 <HAL_DFSDM_FilterRegConvHalfCpltCallback>:
+}
+void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef* hdac)
 {
-	//playSong();
-	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 }*/
 void HAL_DFSDM_FilterRegConvHalfCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
@@ -1906,7 +1906,7 @@ void HAL_DFSDM_FilterRegConvHalfCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_
  8000f6a:	b083      	sub	sp, #12
  8000f6c:	af00      	add	r7, sp, #0
  8000f6e:	6078      	str	r0, [r7, #4]
-		DmaRightRecHalfBuffCplt = 1;
+	DmaRightRecHalfBuffCplt = 1;
  8000f70:	4b04      	ldr	r3, [pc, #16]	; (8000f84 <HAL_DFSDM_FilterRegConvHalfCpltCallback+0x1c>)
  8000f72:	2201      	movs	r2, #1
  8000f74:	701a      	strb	r2, [r3, #0]
@@ -1926,12 +1926,10 @@ void HAL_DFSDM_FilterRegConvCpltCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_filt
  8000f8a:	b083      	sub	sp, #12
  8000f8c:	af00      	add	r7, sp, #0
  8000f8e:	6078      	str	r0, [r7, #4]
-
 	DmaRightRecBuffCplt = 1;
  8000f90:	4b04      	ldr	r3, [pc, #16]	; (8000fa4 <HAL_DFSDM_FilterRegConvCpltCallback+0x1c>)
  8000f92:	2201      	movs	r2, #1
  8000f94:	701a      	strb	r2, [r3, #0]
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
 }
  8000f96:	bf00      	nop
  8000f98:	370c      	adds	r7, #12
