@@ -85,12 +85,12 @@ void HAL_DFSDM_FilterMspInit(DFSDM_Filter_HandleTypeDef* dfsdm_filterHandle)
     if(HAL_RCC_DFSDM1_CLK_ENABLED==1){
       __HAL_RCC_DFSDM1_CLK_ENABLE();
     }
-  
+
     __HAL_RCC_GPIOB_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**DFSDM1 GPIO Configuration    
+    /**DFSDM1 GPIO Configuration
     PB12     ------> DFSDM1_DATIN1
-    PA8     ------> DFSDM1_CKOUT 
+    PA8     ------> DFSDM1_CKOUT
     */
     GPIO_InitStruct.Pin = GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -111,7 +111,7 @@ void HAL_DFSDM_FilterMspInit(DFSDM_Filter_HandleTypeDef* dfsdm_filterHandle)
   /* USER CODE END DFSDM1_MspInit 1 */
   DFSDM1_Init++;
   }
-  
+
     /* DFSDM1 DMA Init */
     /* DFSDM1_FLT0 Init */
   if(dfsdm_filterHandle->Instance == DFSDM1_Filter0){
@@ -152,12 +152,12 @@ void HAL_DFSDM_ChannelMspInit(DFSDM_Channel_HandleTypeDef* dfsdm_channelHandle)
     if(HAL_RCC_DFSDM1_CLK_ENABLED==1){
       __HAL_RCC_DFSDM1_CLK_ENABLE();
     }
-  
+
     __HAL_RCC_GPIOB_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**DFSDM1 GPIO Configuration    
+    /**DFSDM1 GPIO Configuration
     PB12     ------> DFSDM1_DATIN1
-    PA8     ------> DFSDM1_CKOUT 
+    PA8     ------> DFSDM1_CKOUT
     */
     GPIO_InitStruct.Pin = GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -193,10 +193,10 @@ void HAL_DFSDM_FilterMspDeInit(DFSDM_Filter_HandleTypeDef* dfsdm_filterHandle)
   /* USER CODE END DFSDM1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_DFSDM1_CLK_DISABLE();
-  
-    /**DFSDM1 GPIO Configuration    
+
+    /**DFSDM1 GPIO Configuration
     PB12     ------> DFSDM1_DATIN1
-    PA8     ------> DFSDM1_CKOUT 
+    PA8     ------> DFSDM1_CKOUT
     */
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_12);
 
@@ -226,10 +226,10 @@ void HAL_DFSDM_ChannelMspDeInit(DFSDM_Channel_HandleTypeDef* dfsdm_channelHandle
   /* USER CODE END DFSDM1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_DFSDM1_CLK_DISABLE();
-  
-    /**DFSDM1 GPIO Configuration    
+
+    /**DFSDM1 GPIO Configuration
     PB12     ------> DFSDM1_DATIN1
-    PA8     ------> DFSDM1_CKOUT 
+    PA8     ------> DFSDM1_CKOUT
     */
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_12);
 
@@ -240,7 +240,7 @@ void HAL_DFSDM_ChannelMspDeInit(DFSDM_Channel_HandleTypeDef* dfsdm_channelHandle
   /* USER CODE END DFSDM1_MspDeInit 1 */
     }
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 
