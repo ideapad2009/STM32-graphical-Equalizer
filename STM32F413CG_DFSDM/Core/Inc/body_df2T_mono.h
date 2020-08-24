@@ -82,8 +82,7 @@ int main(void)
 			{
 				buf_in[i]= (float)((int32_t)RightRecBuff[i] >> 8);
 			}
-			//arm_biquad_cascade_df1_f32
-			///arm_biquad_cascade_df2T_f32
+
 			arm_biquad_cascade_df2T_f32(&S1, (float32_t *)&buf_in[0], &buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S2, &buf_out[0],&buf_out[0],AUDIO_REC/2);
 			arm_biquad_cascade_df2T_f32(&S3, &buf_out[0],&buf_out[0],AUDIO_REC/2);
