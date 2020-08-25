@@ -46,8 +46,8 @@ STM32L451CE.bin \
 all: STM32L451CE.elf secondary-outputs
 
 # Tool invocations
-STM32L451CE.elf: $(OBJS) $(USER_OBJS) F:\Embedded\ Systems\STM32CubeIDE\STM32L451CE\STM32L451CEUX_FLASH.ld
-	arm-none-eabi-gcc -o "STM32L451CE.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\Embedded Systems\STM32CubeIDE\STM32L451CE\STM32L451CEUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32L451CE.map" -Wl,--gc-sections -static -L../DSP --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32L451CE.elf: $(OBJS) $(USER_OBJS) F:\Embedded\ Systems\STM32CubeIDE\STM32-graphical-Equalizer\STM32L451CE\STM32L451CEUX_FLASH.ld
+	arm-none-eabi-gcc -o "STM32L451CE.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\Embedded Systems\STM32CubeIDE\STM32-graphical-Equalizer\STM32L451CE\STM32L451CEUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32L451CE.map" -Wl,--gc-sections -static -L../DSP --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
